@@ -1,4 +1,3 @@
-# Home-Assistant
 # ESP32 6-Relay Board with Home Assistant (Wyse 3040 + SSD Architecture)
 
 This project demonstrates a **stable, low-storage-friendly Home Assistant setup**
@@ -10,6 +9,7 @@ The architecture is designed specifically for devices with **very limited intern
 ---
 
 ## 🧠 System Architecture Overview
+
 
 ### Hardware
 - Dell Wyse 3040 (low internal eMMC storage)
@@ -25,10 +25,18 @@ The architecture is designed specifically for devices with **very limited intern
 ---
 
 ## 📂 Final Storage Layout
-/mnt/usbssd
-├── docker/ # Docker engine data (images, layers, containers)
-├── homeassistant/ # Home Assistant config & database
-├── esphome/ # ESPHome configs (optional server)
+```bash
+Internal Storage (8GB eMMC):
+└── DietPi OS only
+    ├── System files
+    ├── Kernel
+    └── Basic utilities
+
+External SSD (/mnt/usbssd):
+├── docker/          # Docker data root
+├── homeassistant/   # Home Assistant config
+└── esphome/        # ESPHome configs (optional)
+```
 
 
 Internal storage:
@@ -43,7 +51,8 @@ Internal storage:
 
 Docker is installed using DietPi and forced to store all data on the SSD.
 
-```bash
+```bash 
+
 dietpi-software install 162
 
 {
@@ -51,9 +60,10 @@ dietpi-software install 162
 }
 
 docker info | grep "Docker Root Dir"
+```
 
-🏠 Home Assistant Installation (Docker)
-
+## 🏠 Home Assistant Installation (Docker)
+```bash 
 docker run -d \
   --name homeassistant \
   --restart unless-stopped \
@@ -61,28 +71,33 @@ docker run -d \
   -v /mnt/usbssd/homeassistant:/config \
   -v /etc/localtime:/etc/localtime:ro \
   ghcr.io/home-assistant/home-assistant:stable
-
-Access:
+```
+#### Access:
+```bash
 http://<WYSE_IP>:8123
-
-ESPHome Docker (Optional)
-
+```
+## ESPHome Docker (Optional)
+```bash
 docker run -d \
   --name esphome \
   --restart unless-stopped \
   -p 6052:6052 \
   -v /mnt/usbssd/esphome:/config \
   ghcr.io/esphome/esphome
-
+```
+#### Access
+```bash
 http://<WYSE_IP>:6052
 
-🔌 ESP32 Integration with Home Assistant
+```
 
-Firmware
+## 🔌 ESP32 Integration with Home Assistant
+
+### Firmware
 
 The ESP32 is flashed with ESPHome firmware (esp32-6relay.yaml).
 
-Once flashed:
+#### Once flashed:
 
 * ESP32 connects to Wi-Fi
 
@@ -90,23 +105,21 @@ Once flashed:
 
 * ESPHome server is NOT required to run continuously
 
-Adding ESP32 to Home Assistant
+### Adding ESP32 to Home Assistant :
 
-Go to Settings → Devices & Services
+#### Go to Settings → Devices & Services
 
-ESPHome device is auto-discovered
+#### ESPHome device is auto-discovered
 
-Click Configure
+#### Click Configure
 
-Enter API encryption key if prompted
+#### Enter API encryption key if prompted
 
-Manual method:
+#### Manual method:
 
-Add ESPHome integration
-
-Enter ESP32 IP address
-
-Provide API key
+* Add ESPHome integration
+* Enter ESP32 IP address
+* Provide API key
 
 | Relay   | GPIO   |
 | ------- | ------ |
